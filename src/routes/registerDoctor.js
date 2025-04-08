@@ -1,10 +1,10 @@
 
 import express from "express";
-import RegisterEmployee from "../Controllers/registerEmployeesController.js"
+import registerDoctor from "../Controllers/registerDoctorController.js"
 const router = express.Router();
 
 
-router.route("/").post(RegisterEmployee.register)
+router.route("/").post(registerDoctor.register)
 
 
 export default router

@@ -3,26 +3,26 @@ import bcrypt from "bcryptjs"; //encriptar
 import nodemailer from "nodemailer"; //enviar correo
 import crypto from "crypto"; // código aleatorio
 
-import clientsModel from "../models/Clients.js"
+import patientsModel from "../models/Patient.js"
 import { config } from "../config.js"; //config se pone en llave por que hay dos formas de exportar, cuando la exportamos por default que se puede exportar de cualquier manera y
 // por constante, que en el caso de config es por constante y se tiene que mandar a llamar tal contaste
 
 //Creamos un array de funciones
 
-const registerClientsController = {};
+const registerPatientController = {};
 
-registerClientsController.register = async (req,res) => {
+registerPatientController.register = async (req,res) => {
 
     //1- Solicitas las cosas que vamos a guardar
-    const {name, lastname, birthday, email, password, telephone, dui, isVerified} = req.body;
+    const {name, age,  email,   password, cellphone,  isVerified} = req.body;
 
     try {
         //Verificamos si el cliente ya existe
-        const doesClientExist = await clientsModel.findOne({email}); //Se busca el empleado por el email
+        const doesClientExist = await patientsModel.findOne({email}); //Se busca el empleado por el email
 
         if (doesClientExist) {
 
-            return res.json({message : "Client already exists"})
+            return res.json({message : "Patient already exists"})
         
     }
     //Encriptamos la contraseña
@@ -31,17 +31,15 @@ registerClientsController.register = async (req,res) => {
     const passwordHash = await bcrypt.hash(password, 10);
 
     //Guardo al cliente en la base de datos
-    const newClient = new clientsModel({name, 
-        lastname, 
-        birthday, 
+    const newPatient = new patientsModel({name, 
+        age, 
         email, 
         password: passwordHash /*el campo sigue llamandose password, entonces con : decimos que valor se va a guardar*/ , 
-        telephone, 
-        dui: dui || null /*aqui indicamos si el usuario es menor de edad, por que si no se tiene edad no se tiene dui, y sería nulo*/, 
+        cellphone /*aqui indicamos si el usuario es menor de edad, por que si no se tiene edad no se tiene dui, y sería nulo*/, 
         isVerified: isVerified || false, /*Aqui indicamos que isVerified SIEMPRE sera false al principio*/
     
     });
-    await newClient.save();
+    await newPatient.save();
 
     //Generamos un código aleatorio
     const verificationCode = crypto.randomBytes(3).toString("hex") //aquí creamos el código aleatorio, y con .toString("hex") nos aseguramos que el código siempre tenga letras y números
@@ -93,7 +91,7 @@ transporter.sendMail(mailOptions, (error,info) => {
         console.log("Correo enviado" + info.response /* Info es para enviar un mensaje de confirmación que si se envió el correo */)
 })
 
-res.json({message: "Client registered. lease verify your email with the code sent"})
+res.json({message: "Client registered. please verify your email with the code sent"})
 } 
 catch (error) {
         res.json ({message: "Eror" + error})
@@ -102,7 +100,7 @@ catch (error) {
 
 //Verificar el código
 
-registerClientsController.verifyCodeEmail = async (req, res) => {
+registerPatientController.verifyCodeEmail = async (req, res) => {
 
 const {verificationCode} = req.body;
 
@@ -121,10 +119,10 @@ if(verificationCode !== storedCode){
 }
 
 //Cambiamos el estado de "isVerified" a true
-const client = await clientsModel.findOne({email});
-    client.isVerified = true;
-    await client.save()
-    res.json({nessage: "Email verified"});
+const   Patient = await patientsModel.findOne({email});
+Patient.isVerified = true;
+    await Patient.save()
+    res.json({message: "Email verified"});
 
     //Se quita la cookie con el token
     res.clearCookie("VerificationToken");
@@ -137,4 +135,4 @@ res.json ({message: "error"})
 
 }
 
-export default registerClientsController
+export default registerPatientController

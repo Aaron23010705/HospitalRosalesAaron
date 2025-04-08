@@ -13,7 +13,7 @@ speciality:{
     maxLength:100
 },
 email:{
-    type: string,
+    type: String,
     requiere:true,
     maxLength:100
 },

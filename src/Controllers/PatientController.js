@@ -4,8 +4,8 @@ import Patient from "../models/Patient.js";
 
 PatientController.getPatient = async (req,res) => {
 
-    const Patient = await Patient.find();
-    res.json(Patient)
+    const Patients = await Patient.find();
+    res.json(Patients)
    
 }
 

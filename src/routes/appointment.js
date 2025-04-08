@@ -5,11 +5,11 @@ const router = express.Router();
 
 
 router.route("/")
-.get(clientsController.getClients)
-.post(clientsController.insertClients)
+.get(AppointmentController.getAppointment)
+.post(AppointmentController.insertAppointment)
 
 router.route("/:id")
-.put(clientsController.updateClients)
-.delete(clientsController.deleteClients)
+.put(AppointmentController.updateAppointment)
+.delete(AppointmentController.deleteAppointment)
 
 export default router

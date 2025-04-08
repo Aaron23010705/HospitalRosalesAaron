@@ -1,24 +1,24 @@
 const DoctorController = {};
 
-import Doctor from "../models/Doctor.js";
+import DoctorModel from "../models/Doctor.js";
 
 DoctorController.getDoctor = async (req,res) => {
 
-    const Doctor = await Doctor.find();
+    const Doctor = await DoctorModel.find();
     res.json(Doctor)
    
 }
 
 DoctorController.updateDoctor = async (req,res) => {
     const {name, speciality, email, password} = req.body;
-     const updatedDoctor = await Doctor.findByIdAndUpdate(req.params.id,{name, speciality, email, password},{new:true})
+     const updatedDoctor = await DoctorModel.findByIdAndUpdate(req.params.id,{name, speciality, email, password},{new:true})
      res.json ({message: "Doctor updated"});
 
 }
 
 DoctorController.deleteDoctor = async (req,res) => {
 
-    await Doctor.findByIdAndDelete(req.params.id);
+    await DoctorModel.findByIdAndDelete(req.params.id);
     res.json ({message: "Doctor deleted"});
 
 }
